@@ -24,7 +24,7 @@ fn main() {
 ```make
 build:
         @RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-wasi --release
-        @cp target/wasm32-wasi/release/my_App.wasm .
+        @cp target/wasm32-wasi/release/my_app.wasm .
 ```
 
 ```bash
