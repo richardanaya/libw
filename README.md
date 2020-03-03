@@ -3,6 +3,10 @@
 This library is meant to be a more human wrapper around only the strict capabilities of [`wasi`](https://github.com/bytecodealliance/wasmtime/blob/master/docs/WASI-api.md) and only uses `#[no_std]` and `alloc` to encourage non-bloated wasm binaries. It can also be a great way to learn exactly how `wasi` works!.
 
 # hello world
+```toml
+[dependencies]
+libw = "0"
+```
 
 ```rust
 fn main() {
