@@ -88,9 +88,9 @@ pub fn random() -> f32 {
         let max = 0xFFFFFFFFFFFFFFFF as u64;
         let mut array = [0 as u8; 8];
         wasi::random_get(noise.as_mut_ptr() as *mut u8, 8);
-        array.copy_from_slice(&noise); 
+        array.copy_from_slice(&noise);
         let value = u64::from_be_bytes(array);
-        value as f32/max  as f32
+        value as f32 / max as f32
     }
 }
 
