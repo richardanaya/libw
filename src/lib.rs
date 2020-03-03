@@ -1,15 +1,15 @@
- #![no_std]
- #[macro_use]
- extern crate alloc;
- use alloc::string::{String,ToString};
- use alloc::vec::Vec;
+#![no_std]
+#[macro_use]
+extern crate alloc;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
 
- pub struct EnvironmentalVariable {
-     pub name:String,
-     pub value:String,
- }
+pub struct EnvironmentalVariable {
+    pub name: String,
+    pub value: String,
+}
 
- pub fn print(message: &str) {
+pub fn print(message: &str) {
     unsafe {
         let stdout = 1;
         let data = [wasi::Ciovec {
@@ -18,42 +18,72 @@
         }];
         wasi::fd_write(stdout, &data).unwrap();
     }
- }
+}
 
- pub fn println(message: &str) {
-    let mut  m = String::from(message);
+pub fn println(message: &str) {
+    let mut m = String::from(message);
     m.push_str("\n");
     print(&m);
- }
+}
 
- pub fn environment_variables() -> Vec<EnvironmentalVariable> {
-    let mut envs: Vec<EnvironmentalVariable> = vec![];
+pub fn command_line_arguments() -> Vec<String> {
+    let mut cmd_args: Vec<String> = vec![];
     unsafe {
-        let (ct,len) = wasi::environ_sizes_get().unwrap();
-        let mut env_positions:Vec<i32> = vec![0; ct];
-        let mut env_data:Vec<u8> = vec![0; len];
-        wasi::environ_get(env_positions.as_mut_ptr() as *mut *mut u8,env_data.as_mut_ptr() as *mut u8).unwrap();
+        let (ct, len) = wasi::args_sizes_get().unwrap();
+        let mut env_positions: Vec<i32> = vec![0; ct];
+        let mut env_data: Vec<u8> = vec![0; len];
+        wasi::args_get(
+            env_positions.as_mut_ptr() as *mut *mut u8,
+            env_data.as_mut_ptr() as *mut u8,
+        )
+        .unwrap();
         for x in 0..ct {
             let base = env_data.as_mut_ptr() as usize;
             let beg = env_positions[x] as usize - base;
-            let end = if x == ct-1 {
-                env_data.len()-1
+            let end = if x == ct - 1 {
+                env_data.len() - 1
             } else {
-                env_positions[x+1] as usize -1 - base
+                env_positions[x + 1] as usize - 1 - base
+            };
+            let cmd_arg = String::from_utf8_lossy(&env_data[beg..end]);
+            cmd_args.push(cmd_arg.to_string());
+        }
+    }
+    cmd_args
+}
+
+pub fn environment_variables() -> Vec<EnvironmentalVariable> {
+    let mut envs: Vec<EnvironmentalVariable> = vec![];
+    unsafe {
+        let (ct, len) = wasi::environ_sizes_get().unwrap();
+        let mut env_positions: Vec<i32> = vec![0; ct];
+        let mut env_data: Vec<u8> = vec![0; len];
+        wasi::environ_get(
+            env_positions.as_mut_ptr() as *mut *mut u8,
+            env_data.as_mut_ptr() as *mut u8,
+        )
+        .unwrap();
+        for x in 0..ct {
+            let base = env_data.as_mut_ptr() as usize;
+            let beg = env_positions[x] as usize - base;
+            let end = if x == ct - 1 {
+                env_data.len() - 1
+            } else {
+                env_positions[x + 1] as usize - 1 - base
             };
             let pair = String::from_utf8_lossy(&env_data[beg..end]);
-            let p:Vec<&str> = pair.splitn(2, '=').collect();
-            envs.push(EnvironmentalVariable{
-                name:p[0].to_string(),
-                value:p[1].to_string(),
+            let p: Vec<&str> = pair.splitn(2, '=').collect();
+            envs.push(EnvironmentalVariable {
+                name: p[0].to_string(),
+                value: p[1].to_string(),
             });
         }
     }
     envs
- }
+}
 
- pub fn read_text(path: &str) -> String {
-     "".to_string()
+pub fn read_text(path: &str) -> String {
+    "".to_string()
     /*unsafe {
 
         let mut fs_rights_base = 0;
@@ -71,8 +101,6 @@
                 fs_flags
             ).unwrap();
     }*/
- }
+}
 
- pub fn write_text(_path: &str, _data: &str) {
-    
- }
+pub fn write_text(_path: &str, _data: &str) {}
