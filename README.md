@@ -4,6 +4,13 @@ This library is meant to be a more human wrapper around only the strict capabili
 
 # hello world
 ```toml
+[package]
+name = "my_app"
+version = "0.0.1"
+
+[profile.release]
+lto = true
+
 [dependencies]
 libw = "0"
 ```
