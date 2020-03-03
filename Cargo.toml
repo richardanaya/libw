@@ -3,7 +3,7 @@ name = "libw"
 version = "0.0.1"
 edition = "2018"
 authors = ["Richard Anaya"]
-categories = ["wasm", "no-std", "wasi"]
+categories = ["wasm", "no-std"]
 include = [
     "src/**/*.rs",
     "Cargo.toml",
