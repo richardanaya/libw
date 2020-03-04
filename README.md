@@ -48,9 +48,9 @@ wasmer my_app.wasm
 
 `wasi` modules are only able to work on folders they have been given explicit permission to access. By default `wasi` has 3 basic files:
 
-* 0 - application text input
-* 1 - application text output
-* 2 - application error text output
+* 0 - application text input stream
+* 1 - application text output stream
+* 2 - application error text output stream
 
 The file that you give explicit permission to will be given file descriptor number 3. You must do this manually by specifying the directory.
 
