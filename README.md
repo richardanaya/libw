@@ -43,3 +43,16 @@ build:
 ```bash
 wasmer my_app.wasm
 ```
+
+# API
+
+* print
+* println
+* random
+* current_time
+* exit
+* yield_control
+* read_text
+* write_text
+* environement_variables
+* command_arguments
