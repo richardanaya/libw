@@ -14,6 +14,13 @@ pub struct AccessibleDirectory {
     pub fd: u32,
 }
 
+pub fn read_line() -> String {
+    let mut line = read_str(0);
+    let len = line.len();
+    line.truncate(len-1);
+    line
+}
+
 pub fn print(message: &str) {
     write_str(1, message)
 }
@@ -182,6 +189,7 @@ pub fn read_text(path: &str) -> Result<String, String> {
 fn open_file(dir_fd: u32, relative_path: &str) -> Result<u32, String> {
     let mut oflags = 0;
     oflags |= wasi::OFLAGS_CREAT;
+    oflags |= wasi::OFLAGS_TRUNC;
     unsafe {
         match wasi::path_open(
             dir_fd,
