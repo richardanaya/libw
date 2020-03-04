@@ -155,9 +155,12 @@ pub fn unix_time() -> u64 {
     }
 }
 
-pub fn read_text(_path: &str) -> String {
-    // todo
-    "".to_string()
+pub fn read_text(path: &str) -> Result<String, String> {
+    if let Some(fd) = get_owning_directory(path) {
+        Ok("found".to_string())
+    } else {
+        Err("not found".to_string())
+    }
     /*unsafe {
 
         let mut fs_rights_base = 0;
@@ -189,7 +192,9 @@ pub fn accessible_directories() -> Vec<AccessibleDirectory> {
             let len = 1024;
             let mut path_data: Vec<u8> = vec![0; len];
             if let Ok(_) = wasi::fd_prestat_dir_name(i, path_data.as_mut_ptr() as *mut u8, len) {
-                String::from_utf8_lossy(&path_data).to_string()
+                String::from_utf8_lossy(&path_data)
+                    .trim_end_matches("\0")
+                    .to_string()
             } else {
                 break;
             }
@@ -202,4 +207,16 @@ pub fn accessible_directories() -> Vec<AccessibleDirectory> {
     }
 
     dirs
+}
+
+fn get_owning_directory(path: &str) -> Option<AccessibleDirectory> {
+    let mut d = None;
+    let dirs = accessible_directories();
+    for dir in dirs.into_iter() {
+        if path.starts_with(&dir.path) {
+            d = Some(dir);
+            break;
+        }
+    }
+    d
 }
