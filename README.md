@@ -49,7 +49,9 @@ wasmer my_app.wasm
 * print - print characters
 * println - print characters ending with newline
 * random - get a random f32
-* current_time - get the current time in unix
+* current_time - milliseconds since unix epoc
+* unix_time - seconds since unix epoc
+* high_preicion_time - get the current realtime value of host clock
 * exit - stop the current process
 * yield_control - yield control of thread
 * TODO read_text - read a text file into a directory

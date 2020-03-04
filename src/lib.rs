@@ -118,11 +118,27 @@ pub fn exit() {
     }
 }
 
-pub fn current_time() -> u64 {
+pub fn high_precision_time() -> u64 {
     unsafe {
         // precision appears is ignored?
         let precision = 0;
         wasi::clock_time_get(wasi::CLOCKID_REALTIME, precision).unwrap() as u64
+    }
+}
+
+pub fn current_time() -> u64 {
+    unsafe {
+        // precision appears is ignored?
+        let precision = 0;
+        wasi::clock_time_get(wasi::CLOCKID_REALTIME, precision).unwrap() as u64 / 1000000
+    }
+}
+
+pub fn unix_time() -> u64 {
+    unsafe {
+        // precision appears is ignored?
+        let precision = 0;
+        wasi::clock_time_get(wasi::CLOCKID_REALTIME, precision).unwrap() as u64 / 1000000000
     }
 }
 
