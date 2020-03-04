@@ -68,7 +68,7 @@ libw::write_text(dir, "hello.txt", txt);
 ```
 
 # API
-### console
+### data streams
 * print - print characters
 * println - print characters ending with newline
 
