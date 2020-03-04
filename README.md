@@ -3,6 +3,7 @@
 This library is meant to be a more human wrapper around only the strict capabilities of [`wasi`](https://github.com/bytecodealliance/wasmtime/blob/master/docs/WASI-api.md)
 
 * only uses `#[no_std]` and `alloc` to encourage non-bloated wasm binaries
+* does not require rust be build with `wasm32-wasi`
 * high level operations
 * great way to learn exactly how `wasi` works!.
 
@@ -12,6 +13,9 @@ This library is meant to be a more human wrapper around only the strict capabili
 name = "my_app"
 version = "0.0.1"
 
+[lib]
+crate-type = ["cdylib"]
+
 [profile.release]
 lto = true
 
@@ -20,15 +24,18 @@ libw = "0"
 ```
 
 ```rust
-fn main() {
+#![no_std]
+
+#[no_mangle]
+pub fn _start() {
     libw::print("hey!\n");
 }
 ```
 
 ```make
 build:
-        @RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-wasi --release
-        @cp target/wasm32-wasi/release/my_app.wasm .
+	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
+	@cp target/wasm32-unknown-unknown/release/wasp.wasm .
 ```
 
 ```bash
