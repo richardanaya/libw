@@ -52,7 +52,7 @@ wasmer my_app.wasm
 * current_time
 * exit
 * yield_control
-* read_text
-* write_text
+* TODO read_text 
+* TODO write_text
 * environement_variables
 * command_arguments
