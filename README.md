@@ -13,7 +13,7 @@ This library is meant to be a more human wrapper around only the strict capabili
 ```toml
 [package]
 name = "my_app"
-version = "0.0.1"
+version = "0"
 
 [lib]
 crate-type = ["cdylib"]
