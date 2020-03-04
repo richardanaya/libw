@@ -31,6 +31,19 @@ pub fn println(message: &str) {
     print(&m);
 }
 
+pub fn error(message: &str) {
+    let mut m = String::from(message);
+    m.push_str("\n");
+    unsafe {
+        let stdout = 2;
+        let data = [wasi::Ciovec {
+            buf: m.as_ptr(),
+            buf_len: m.len(),
+        }];
+        wasi::fd_write(stdout, &data).unwrap();
+    }
+}
+
 pub fn command_line_arguments() -> Vec<String> {
     let mut cmd_args: Vec<String> = vec![];
     unsafe {
