@@ -17,7 +17,7 @@ pub struct AccessibleDirectory {
 pub fn read_line() -> String {
     let mut line = read_str(0);
     let len = line.len();
-    line.truncate(len-1);
+    line.truncate(len - 1);
     line
 }
 
