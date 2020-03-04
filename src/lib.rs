@@ -9,6 +9,11 @@ pub struct EnvironmentalVariable {
     pub value: String,
 }
 
+pub struct File {
+    pub is_directory: bool,
+    pub fd: usize,
+}
+
 pub fn print(message: &str) {
     unsafe {
         let stdout = 1;
@@ -52,6 +57,13 @@ pub fn command_line_arguments() -> Vec<String> {
     cmd_args
 }
 
+pub fn executing_directory() -> File {
+    File {
+        fd: 3,
+        is_directory: true,
+    }
+}
+
 pub fn environment_variables() -> Vec<EnvironmentalVariable> {
     let mut envs: Vec<EnvironmentalVariable> = vec![];
     unsafe {
@@ -82,7 +94,7 @@ pub fn environment_variables() -> Vec<EnvironmentalVariable> {
     envs
 }
 
-pub fn random() -> f32 {
+pub fn random_number() -> f32 {
     unsafe {
         let mut noise: Vec<u8> = vec![0; 8];
         let max = 0xFFFFFFFFFFFFFFFF as u64;
