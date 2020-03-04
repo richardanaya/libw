@@ -60,6 +60,13 @@ wasmer my_app.wasm --dir=. # current directory is given access
 
 In `libw` file descriptor 3 is referred to as the `executing directory`.
 
+```
+let dir = libw::executing_directory();
+let mut txt = libw::read_text(dir, "hello.txt");
+txt = "goodbye".to_string();
+libw::write_text(dir, "hello.txt", txt);
+```
+
 # API
 
 * print - print characters
