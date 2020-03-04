@@ -79,7 +79,7 @@ libw::write_text(dir, "hello.txt", txt);
 
 ### scheduling
 * exit - stop the current process
-* yield_control - yield control of thread
+* sleep - yield control of thread for n milliseconds
 
 ### environment
 * environment_variables - get a vector of environment variables

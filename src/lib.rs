@@ -119,9 +119,16 @@ pub fn random_number() -> f32 {
     }
 }
 
-pub fn yield_control() {
+pub fn sleep(millis: usize) {
     unsafe {
-        wasi::sched_yield().unwrap();
+        let t = current_time();
+        loop {
+            wasi::sched_yield().unwrap();
+            let nt = current_time();
+            if nt - t >= millis as u64 {
+                break;
+            }
+        }
     }
 }
 
