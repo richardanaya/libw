@@ -68,8 +68,6 @@ libw::write_text(path, txt);
 wasmer my_app.wasm --dir=/foo 
 ```
 
-Note: by default wasmer currently already gives access to `/`, so this `--dir` is unecessary. On other hosts this is not gauranteed.
-
 # API
 ### data streams
 * `read_line` - read input characters until you hit enter
