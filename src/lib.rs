@@ -28,6 +28,21 @@ fn write_str(fd: u32, s: &str) {
     }
 }
 
+fn read_str(fd: u32) -> String {
+    unsafe {
+        let len = 10240;
+        let mut path_data: Vec<u8> = vec![0; len];
+        let data = [wasi::Iovec {
+            buf: path_data.as_mut_ptr(),
+            buf_len: path_data.len(),
+        }];
+        wasi::fd_read(fd, &data).unwrap();
+        String::from_utf8_lossy(&path_data)
+            .trim_end_matches("\0")
+            .to_string()
+    }
+}
+
 pub fn println(message: &str) {
     let mut m = String::from(message);
     m.push_str("\n");
@@ -156,7 +171,7 @@ pub fn read_text(path: &str) -> Result<String, String> {
     if let Some(parent_dir) = get_owning_directory(path) {
         let rel_path = relative_path(&parent_dir.path, path);
         let fd = open_file(parent_dir.fd, &rel_path)?;
-        let data = "todo".to_string();
+        let data = read_str(fd);
         close_file(fd);
         Ok(data)
     } else {

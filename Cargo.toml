@@ -1,6 +1,6 @@
 [package]
 name = "libw"
-version = "0.0.3"
+version = "0.1.0"
 edition = "2018"
 authors = ["Richard Anaya"]
 categories = ["wasm", "no-std"]
@@ -11,7 +11,7 @@ include = [
 license = "MIT OR Apache-2.0"
 homepage = "https://github.com/richardanaya/libw"
 repository = "https://github.com/richardanaya/libw"
-description = "A library for simply using wasi"
+description = "A lhuman library for using wasi"
 
 [dependencies]
 wasi = "0.9.0+wasi-snapshot-preview1"
