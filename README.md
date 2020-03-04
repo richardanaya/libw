@@ -5,7 +5,7 @@
 This library is meant to be a more human wrapper around only the strict capabilities of [`wasi`](https://github.com/bytecodealliance/wasmtime/blob/master/docs/WASI-api.md)
 
 * only uses `#[no_std]` and `alloc` to encourage non-bloated wasm binaries
-* does not require rust be built with `wasm32-wasi`
+* does not require rust be built with `wasm32-wasi` ( doing so increases file size )
 * high level operations independent of POSIX
 * great way to learn exactly how `wasi` works!.
 
