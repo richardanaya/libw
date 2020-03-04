@@ -48,9 +48,9 @@ wasmer my_app.wasm
 
 `wasi` modules are only able to work on folders they have been given explicit permission to access. By default `wasi` has 3 basic files:
 
-* 0 - application text input
-* 1 - application text output
-* 2 - application error text output
+* 0 - application text input stream
+* 1 - application text output stream
+* 2 - application error text output stream
 
 The file that you give explicit permission to will be given file descriptor number 3. You must do this manually by specifying the directory.
 
@@ -69,26 +69,27 @@ libw::write_text(dir, "hello.txt", txt);
 
 # API
 ### data streams
-* print - print characters
-* println - print characters ending with newline
+* `print` - print characters
+* `println` - print characters ending with newline
+* `error` - print error
 
 ### time
-* current_time - milliseconds since unix epoc
-* unix_time - seconds since unix epoc
-* high_preicion_time - get the current realtime value of host clock
+* `current_time` - milliseconds since unix epoc
+* `unix_time` - seconds since unix epoc
+* `high_precision_time` - get the current realtime value of host clock
 
 ### scheduling
-* exit - stop the current process
-* sleep - yield control of thread for n milliseconds
+* `exit` - stop the current process
+* `sleep` - yield control of thread for n milliseconds
 
 ### environment
-* environment_variables - get a vector of environment variables
-* command_arguments - get a vec of strings of command line arguments
+* `environment_variables` - get a vector of environment variables
+* `command_arguments` - get a vec of strings of command line arguments
 
 ### file
-* executing_directory - get the directory the web assembly module was given permission to execute on
-* TODO read_text - read a text file into a directory
-* TODO write_text - write a text file into a directory
+* `executing_directory` - get the directory the web assembly module was given permission to execute on
+* TODO `read_text` - read a text file into a directory
+* TODO `write_text` - write a text file into a directory
 
 ### math
-* random - get a random f32
+* `random` - get a random f32
