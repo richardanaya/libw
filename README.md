@@ -52,20 +52,23 @@ wasmer my_app.wasm
 * 1 - application text output stream
 * 2 - application error text output stream
 
-The file that you give explicit permission to will be given file descriptor number 3. You must do this manually by specifying the directory.
+The file that you give explicit permission to will be given file descriptor number on startup. You must do this manually by specifying the directory.
 
-```bash
-wasmer my_app.wasm --dir=. # current directory is given access
-```
+In `libw` can get list of accessible directories with `accessible_directores()`. You must specify a full path that has a prefix of one of the accessible paths.
 
-In `libw` file descriptor 3 is referred to as the *executing directory*.
 
 ```rust
-let dir = libw::executing_directory();
-let mut txt = libw::read_text(dir, "hello.txt");
-txt = "goodbye".to_string();
-libw::write_text(dir, "hello.txt", txt);
+let path = "/foo/hello.txt";
+let mut txt = libw::read_text(path);
+txt.push_str("goodbye");
+libw::write_text(path, txt);
 ```
+
+```bash
+wasmer my_app.wasm --dir=/foo 
+```
+
+Note: by default wasmer currently already gives access to `/`, so this `--dir` is unecessary. On other hosts this is not gauranteed.
 
 # API
 ### data streams
