@@ -46,13 +46,14 @@ wasmer my_app.wasm
 
 # API
 
-* print
-* println
-* random
-* current_time
-* exit
-* yield_control
-* TODO read_text 
-* TODO write_text
-* environement_variables
-* command_arguments
+* print - print characters
+* println - print characters ending with newline
+* random - get a random f32
+* current_time - get the current time in unix
+* exit - stop the current process
+* yield_control - yield control of thread
+* TODO read_text - read a text file into a directory
+* TODO write_text - write a text file into a directory
+* environment_variables - get a vector of environment variables
+* command_arguments - get a vec of strings of command line arguments
+* executing_directory - get the directory the web assembly module was given permission to execute on
