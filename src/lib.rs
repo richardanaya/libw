@@ -15,13 +15,16 @@ pub struct AccessibleDirectory {
 }
 
 pub fn print(message: &str) {
+    write_str(1, message)
+}
+
+fn write_str(fd: u32, s: &str) {
     unsafe {
-        let stdout = 1;
         let data = [wasi::Ciovec {
-            buf: message.as_ptr(),
-            buf_len: message.len(),
+            buf: s.as_ptr(),
+            buf_len: s.len(),
         }];
-        wasi::fd_write(stdout, &data).unwrap();
+        wasi::fd_write(fd, &data).unwrap();
     }
 }
 
@@ -34,14 +37,7 @@ pub fn println(message: &str) {
 pub fn error(message: &str) {
     let mut m = String::from(message);
     m.push_str("\n");
-    unsafe {
-        let stdout = 2;
-        let data = [wasi::Ciovec {
-            buf: m.as_ptr(),
-            buf_len: m.len(),
-        }];
-        wasi::fd_write(stdout, &data).unwrap();
-    }
+    write_str(2, &m)
 }
 
 pub fn command_line_arguments() -> Vec<String> {
@@ -125,9 +121,10 @@ pub fn sleep(millis: usize) {
     }
 }
 
-pub fn exit() {
+pub fn exit() -> ! {
     unsafe {
         wasi::proc_exit(0);
+        panic!("should not be here")
     }
 }
 
@@ -156,37 +153,55 @@ pub fn unix_time() -> u64 {
 }
 
 pub fn read_text(path: &str) -> Result<String, String> {
-    if let Some(fd) = get_owning_directory(path) {
-        Ok("found".to_string())
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let fd = open_file(parent_dir.fd, &rel_path)?;
+        let data = "todo".to_string();
+        close_file(fd);
+        Ok(data)
     } else {
         Err("no access to file".to_string())
     }
-    /*unsafe {
-
-        let mut fs_rights_base = 0;
-        fs_rights_base |= wasi::RIGHTS_FD_READ;
-        fs_rights_base |= wasi::RIGHTS_FD_READDIR;
-        fs_rights_base |= wasi::RIGHTS_PATH_FILESTAT_GET;
-        fs_rights_base |= wasi::RIGHTS_PATH_OPEN;
-        let mut fd = wasi::path_open(
-                self.fd,
-                dirflags,
-                path,
-                oflags,
-                fs_rights_base,surrenders
-                fs_rights_inheriting,
-                fs_flags
-            ).unwrap();
-    }*/
 }
 
-pub fn write_text(path: &str, _data: &str) -> Result<(), String> {
-    if let Some(fd) = get_owning_directory(path) {
+fn open_file(dir_fd: u32, relative_path: &str) -> Result<u32, String> {
+    let mut oflags = 0;
+    oflags |= wasi::OFLAGS_CREAT;
+    unsafe {
+        match wasi::path_open(
+            dir_fd,
+            0,
+            relative_path,
+            oflags,
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFFFFFFFFFF,
+            0,
+        ) {
+            Ok(fd) => Ok(fd),
+            Err(_) => Err("Something went wrong opening file, did you give access?".to_string()),
+        }
+    }
+}
+
+fn close_file(fd: u32) {
+    unsafe { wasi::fd_close(fd).unwrap() }
+}
+
+fn relative_path(base_dir: &str, path: &str) -> String {
+    let rel_path = &path[base_dir.len()..];
+    rel_path.to_string()
+}
+
+pub fn write_text(path: &str, data: &str) -> Result<(), String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let fd = open_file(parent_dir.fd, &rel_path)?;
+        write_str(fd, data);
+        close_file(fd);
         Ok(())
     } else {
         Err("no access to file".to_string())
     }
-    // todo
 }
 
 pub fn accessible_directories() -> Vec<AccessibleDirectory> {
@@ -217,10 +232,13 @@ pub fn accessible_directories() -> Vec<AccessibleDirectory> {
 fn get_owning_directory(path: &str) -> Option<AccessibleDirectory> {
     let mut d = None;
     let dirs = accessible_directories();
+    // get the most specific folder
+    let mut len = 0;
     for dir in dirs.into_iter() {
-        if path.starts_with(&dir.path) {
+        let dir_path_len = dir.path.len();
+        if path.starts_with(&dir.path) && dir_path_len > len {
             d = Some(dir);
-            break;
+            len = dir_path_len
         }
     }
     d
