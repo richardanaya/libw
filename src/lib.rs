@@ -87,14 +87,35 @@ pub fn random() -> f32 {
         let mut noise: Vec<u8> = vec![0; 8];
         let max = 0xFFFFFFFFFFFFFFFF as u64;
         let mut array = [0 as u8; 8];
-        wasi::random_get(noise.as_mut_ptr() as *mut u8, 8);
+        wasi::random_get(noise.as_mut_ptr() as *mut u8, 8).unwrap();
         array.copy_from_slice(&noise);
         let value = u64::from_be_bytes(array);
         value as f32 / max as f32
     }
 }
 
-pub fn read_text(path: &str) -> String {
+pub fn yield_control() {
+    unsafe {
+        wasi::sched_yield().unwrap();
+    }
+}
+
+pub fn exit() {
+    unsafe {
+        wasi::proc_exit(0);
+    }
+}
+
+pub fn current_time() -> u64 {
+    unsafe {
+        // precision appears is ignored?
+        let precision = 0;
+        wasi::clock_time_get(wasi::CLOCKID_REALTIME, precision).unwrap() as u64
+    }
+}
+
+pub fn read_text(_path: &str) -> String {
+    // todo
     "".to_string()
     /*unsafe {
 
@@ -108,11 +129,13 @@ pub fn read_text(path: &str) -> String {
                 dirflags,
                 path,
                 oflags,
-                fs_rights_base,
+                fs_rights_base,surrenders
                 fs_rights_inheriting,
                 fs_flags
             ).unwrap();
     }*/
 }
 
-pub fn write_text(_path: &str, _data: &str) {}
+pub fn write_text(_path: &str, _data: &str) {
+    // todo
+}
