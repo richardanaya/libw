@@ -72,6 +72,7 @@ Note: by default wasmer currently already gives access to `/`, so this `--dir` i
 
 # API
 ### data streams
+* `read_line` - read input characters until you hit enter
 * `print` - print characters
 * `println` - print characters ending with newline
 * `error` - print error
