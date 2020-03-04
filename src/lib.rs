@@ -159,7 +159,7 @@ pub fn read_text(path: &str) -> Result<String, String> {
     if let Some(fd) = get_owning_directory(path) {
         Ok("found".to_string())
     } else {
-        Err("not found".to_string())
+        Err("no access to file".to_string())
     }
     /*unsafe {
 
@@ -180,7 +180,12 @@ pub fn read_text(path: &str) -> Result<String, String> {
     }*/
 }
 
-pub fn write_text(_path: &str, _data: &str) {
+pub fn write_text(path: &str, _data: &str) -> Result<(), String> {
+    if let Some(fd) = get_owning_directory(path) {
+        Ok(())
+    } else {
+        Err("no access to file".to_string())
+    }
     // todo
 }
 
