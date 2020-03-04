@@ -68,17 +68,27 @@ libw::write_text(dir, "hello.txt", txt);
 ```
 
 # API
-
+### console
 * print - print characters
 * println - print characters ending with newline
-* random - get a random f32
+
+### time
 * current_time - milliseconds since unix epoc
 * unix_time - seconds since unix epoc
 * high_preicion_time - get the current realtime value of host clock
+
+### scheduling
 * exit - stop the current process
 * yield_control - yield control of thread
-* TODO read_text - read a text file into a directory
-* TODO write_text - write a text file into a directory
+
+### environment
 * environment_variables - get a vector of environment variables
 * command_arguments - get a vec of strings of command line arguments
+
+### file
 * executing_directory - get the directory the web assembly module was given permission to execute on
+* TODO read_text - read a text file into a directory
+* TODO write_text - write a text file into a directory
+
+### math
+* random - get a random f32
