@@ -1,5 +1,7 @@
 # libw
 
+<a href="https://docs.rs/libw"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
+
 This library is meant to be a more human wrapper around only the strict capabilities of [`wasi`](https://github.com/bytecodealliance/wasmtime/blob/master/docs/WASI-api.md)
 
 * only uses `#[no_std]` and `alloc` to encourage non-bloated wasm binaries
