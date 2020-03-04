@@ -5,7 +5,7 @@
 This library is meant to be a more human wrapper around only the strict capabilities of [`wasi`](https://github.com/bytecodealliance/wasmtime/blob/master/docs/WASI-api.md)
 
 * only uses `#[no_std]` and `alloc` to encourage non-bloated wasm binaries
-* does not require rust be built with `wasm32-wasi`
+* does not require rust be built with `wasm32-wasi` ( doing so increases file size )
 * high level operations independent of POSIX
 * great way to learn exactly how `wasi` works!.
 
@@ -42,6 +42,29 @@ build:
 
 ```bash
 wasmer my_app.wasm
+```
+
+# working with files
+
+`wasi` modules are only able to work on folders they have been given explicit permission to access. By default `wasi` has 3 basic files:
+
+* 0 - application text input
+* 1 - application text output
+* 2 - application error text output
+
+The file that you give explicit permission to will be given file descriptor number 3. You must do this manually by specifying the directory.
+
+```bash
+wasmer my_app.wasm --dir=. # current directory is given access
+```
+
+In `libw` file descriptor 3 is referred to as the *executing directory*.
+
+```rust
+let dir = libw::executing_directory();
+let mut txt = libw::read_text(dir, "hello.txt");
+txt = "goodbye".to_string();
+libw::write_text(dir, "hello.txt", txt);
 ```
 
 # API
