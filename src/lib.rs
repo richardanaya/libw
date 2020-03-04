@@ -9,9 +9,9 @@ pub struct EnvironmentalVariable {
     pub value: String,
 }
 
-pub struct File {
-    pub is_directory: bool,
-    pub fd: usize,
+pub struct AccessibleDirectory {
+    pub path: String,
+    pub fd: u32,
 }
 
 pub fn print(message: &str) {
@@ -68,13 +68,6 @@ pub fn command_line_arguments() -> Vec<String> {
         }
     }
     cmd_args
-}
-
-pub fn executing_directory() -> File {
-    File {
-        fd: 3,
-        is_directory: true,
-    }
 }
 
 pub fn environment_variables() -> Vec<EnvironmentalVariable> {
@@ -186,4 +179,27 @@ pub fn read_text(_path: &str) -> String {
 
 pub fn write_text(_path: &str, _data: &str) {
     // todo
+}
+
+pub fn accessible_directories() -> Vec<AccessibleDirectory> {
+    let mut dirs = vec![];
+    let mut i = 3;
+    loop {
+        let path = unsafe {
+            let len = 1024;
+            let mut path_data: Vec<u8> = vec![0; len];
+            if let Ok(_) = wasi::fd_prestat_dir_name(i, path_data.as_mut_ptr() as *mut u8, len) {
+                String::from_utf8_lossy(&path_data).to_string()
+            } else {
+                break;
+            }
+        };
+        dirs.push(AccessibleDirectory {
+            fd: i,
+            path: path.to_string(),
+        });
+        i = i + 1;
+    }
+
+    dirs
 }
