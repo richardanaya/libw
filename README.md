@@ -6,7 +6,7 @@ This library is meant to be a more human wrapper around only the strict capabili
 
 * only uses `#[no_std]` and `alloc` to encourage non-bloated wasm binaries
 * does not require rust be built with `wasm32-wasi`
-* high level operations
+* high level operations independent of unix
 * great way to learn exactly how `wasi` works!.
 
 # hello world
