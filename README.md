@@ -58,7 +58,7 @@ The file that you give explicit permission to will be given file descriptor numb
 wasmer my_app.wasm --dir=. # current directory is given access
 ```
 
-In `libw` file descriptor 3 is referred to as the `executing directory`.
+In `libw` file descriptor 3 is referred to as the *executing directory*.
 
 ```rust
 let dir = libw::executing_directory();
