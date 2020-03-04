@@ -91,8 +91,8 @@ Note: by default wasmer currently already gives access to `/`, so this `--dir` i
 * `command_arguments` - get a vec of strings of command line arguments
 
 ### file
-* TODO `read_text` - read a text file into a directory
-* TODO `write_text` - write a text file into a directory
+* `read_text` - read a text file into a directory
+* `write_text` - write a text file into a directory
 
 ### math
 * `random` - get a random f32
