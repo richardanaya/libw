@@ -83,11 +83,11 @@ libw::write_text(dir, "hello.txt", txt);
 * `sleep` - yield control of thread for n milliseconds
 
 ### environment
+* `accessible_directories` - gets a vector of directories your wasi module has access to
 * `environment_variables` - get a vector of environment variables
 * `command_arguments` - get a vec of strings of command line arguments
 
 ### file
-* `executing_directory` - get the directory the web assembly module was given permission to execute on
 * TODO `read_text` - read a text file into a directory
 * TODO `write_text` - write a text file into a directory
 
