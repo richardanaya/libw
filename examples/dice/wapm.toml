@@ -1,0 +1,15 @@
+[package]
+name = "richard/dice"
+version = "0.0.1"
+description = "a dice roller"
+readme = "README.md"
+repository = "https://github.com/richardanaya/libw/examples/dice"
+
+[[module]]
+name = "dice"
+source = "dice.wasm"
+abi = "dice"
+
+[[command]]
+name = "dice"
+module = "dice"

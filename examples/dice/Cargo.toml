@@ -1,0 +1,15 @@
+[package]
+name = "dice"
+version = "0.0.1"
+description = "dice roller using libw"
+readme = "README.md"
+repository = "https://github.com/libw/examples/dice"
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+
+[dependencies]
+libw = {path = "../../../libw", version="0"}
