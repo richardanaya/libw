@@ -177,7 +177,7 @@ pub fn unix_time() -> u64 {
 pub fn read_text(path: &str) -> Result<String, String> {
     if let Some(parent_dir) = get_owning_directory(path) {
         let rel_path = relative_path(&parent_dir.path, path);
-        let fd = open_file(parent_dir.fd, &rel_path)?;
+        let fd = open_file(parent_dir.fd, &rel_path, false)?;
         let data = read_str(fd);
         close_file(fd);
         Ok(data)
@@ -186,10 +186,12 @@ pub fn read_text(path: &str) -> Result<String, String> {
     }
 }
 
-fn open_file(dir_fd: u32, relative_path: &str) -> Result<u32, String> {
+fn open_file(dir_fd: u32, relative_path: &str, write: bool) -> Result<u32, String> {
     let mut oflags = 0;
-    oflags |= wasi::OFLAGS_CREAT;
-    oflags |= wasi::OFLAGS_TRUNC;
+    if write {
+        oflags |= wasi::OFLAGS_CREAT;
+        oflags |= wasi::OFLAGS_TRUNC;
+    }
     unsafe {
         match wasi::path_open(
             dir_fd,
@@ -218,7 +220,7 @@ fn relative_path(base_dir: &str, path: &str) -> String {
 pub fn write_text(path: &str, data: &str) -> Result<(), String> {
     if let Some(parent_dir) = get_owning_directory(path) {
         let rel_path = relative_path(&parent_dir.path, path);
-        let fd = open_file(parent_dir.fd, &rel_path)?;
+        let fd = open_file(parent_dir.fd, &rel_path, true)?;
         write_str(fd, data);
         close_file(fd);
         Ok(())
@@ -235,9 +237,13 @@ pub fn accessible_directories() -> Vec<AccessibleDirectory> {
             let len = 1024;
             let mut path_data: Vec<u8> = vec![0; len];
             if let Ok(_) = wasi::fd_prestat_dir_name(i, path_data.as_mut_ptr() as *mut u8, len) {
-                String::from_utf8_lossy(&path_data)
+                let mut p = String::from_utf8_lossy(&path_data)
                     .trim_end_matches("\0")
-                    .to_string()
+                    .to_string();
+                if !p.ends_with("/") {
+                    p.push_str("/");
+                }
+                p
             } else {
                 break;
             }
