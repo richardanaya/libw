@@ -90,8 +90,8 @@ wasmer my_app.wasm --dir=/foo
 * `command_arguments` - get a vec of strings of command line arguments
 
 ### file
-* `read_text` - read a text file into a directory
-* `write_text` - write a text file into a directory
+* `read_text` - read a text file into a string
+* `write_text` - write a text file from a string
 
 ### math
 * `random` - get a random f32
