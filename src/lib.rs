@@ -26,6 +26,10 @@ pub fn print(message: &str) {
 }
 
 fn write_str(fd: u32, s: &str) {
+    write_bytes(fd, s.as_bytes())
+}
+
+pub fn write_bytes(fd: u32, s: &[u8]) {
     unsafe {
         let data = [wasi::Ciovec {
             buf: s.as_ptr(),
@@ -36,6 +40,13 @@ fn write_str(fd: u32, s: &str) {
 }
 
 fn read_str(fd: u32) -> String {
+    let path_data = read_bytes(fd);
+    String::from_utf8_lossy(&path_data)
+        .trim_end_matches("\0")
+        .to_string()
+}
+
+pub fn read_bytes(fd: u32) -> Vec<u8> {
     unsafe {
         let len = 10240;
         let mut path_data: Vec<u8> = vec![0; len];
@@ -44,9 +55,7 @@ fn read_str(fd: u32) -> String {
             buf_len: path_data.len(),
         }];
         wasi::fd_read(fd, &data).unwrap();
-        String::from_utf8_lossy(&path_data)
-            .trim_end_matches("\0")
-            .to_string()
+        path_data
     }
 }
 
