@@ -26,10 +26,10 @@ pub fn print(message: &str) {
 }
 
 fn write_str(fd: u32, s: &str) {
-    write_bytes(fd, s.as_bytes())
+    write_all_bytes(fd, s.as_bytes())
 }
 
-pub fn write_bytes(fd: u32, s: &[u8]) {
+fn write_all_bytes(fd: u32, s: &[u8]) {
     unsafe {
         let data = [wasi::Ciovec {
             buf: s.as_ptr(),
@@ -40,13 +40,13 @@ pub fn write_bytes(fd: u32, s: &[u8]) {
 }
 
 fn read_str(fd: u32) -> String {
-    let path_data = read_bytes(fd);
+    let path_data = read_all_bytes(fd);
     String::from_utf8_lossy(&path_data)
         .trim_end_matches("\0")
         .to_string()
 }
 
-pub fn read_bytes(fd: u32) -> Vec<u8> {
+fn read_all_bytes(fd: u32) -> Vec<u8> {
     unsafe {
         let len = 10240;
         let mut path_data: Vec<u8> = vec![0; len];
@@ -195,6 +195,18 @@ pub fn read_text(path: &str) -> Result<String, String> {
     }
 }
 
+pub fn read_bytes(path: &str) -> Result<Vec<u8>, String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let fd = open_file(parent_dir.fd, &rel_path, false)?;
+        let data = read_all_bytes(fd);
+        close_file(fd);
+        Ok(data)
+    } else {
+        Err("no access to file".to_string())
+    }
+}
+
 fn open_file(dir_fd: u32, relative_path: &str, write: bool) -> Result<u32, String> {
     let mut oflags = 0;
     if write {
@@ -231,6 +243,18 @@ pub fn write_text(path: &str, data: &str) -> Result<(), String> {
         let rel_path = relative_path(&parent_dir.path, path);
         let fd = open_file(parent_dir.fd, &rel_path, true)?;
         write_str(fd, data);
+        close_file(fd);
+        Ok(())
+    } else {
+        Err("no access to file".to_string())
+    }
+}
+
+pub fn write_bytes(path: &str, data: &[u8]) -> Result<(), String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let fd = open_file(parent_dir.fd, &rel_path, true)?;
+        write_all_bytes(fd, data);
         close_file(fd);
         Ok(())
     } else {
