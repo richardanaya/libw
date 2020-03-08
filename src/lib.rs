@@ -48,7 +48,7 @@ fn read_str(fd: u32) -> String {
 
 fn read_all_bytes(fd: u32) -> Vec<u8> {
     unsafe {
-        let len = 10240;
+        let len = wasi::fd_filestat_get(fd).unwrap().size as usize;
         let mut path_data: Vec<u8> = vec![0; len];
         let data = [wasi::Iovec {
             buf: path_data.as_mut_ptr(),
@@ -304,4 +304,14 @@ fn get_owning_directory(path: &str) -> Option<AccessibleDirectory> {
         }
     }
     d
+}
+
+pub fn file_size(path: &str) -> Result<u64, String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let file_stat = unsafe { wasi::path_filestat_get(parent_dir.fd, 0, &rel_path).unwrap() };
+        Ok(file_stat.size)
+    } else {
+        Err("no access to file".to_string())
+    }
 }
