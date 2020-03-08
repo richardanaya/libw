@@ -92,6 +92,8 @@ wasmer my_app.wasm --dir=/foo
 ### file
 * `read_text` - read a text file into a string
 * `write_text` - write a text file from a string
+* `read_bytes` - read all bytes from file
+* `write_bytes` - write all bytes to a file
 
 ### math
 * `random` - get a random f32
