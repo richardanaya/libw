@@ -1,6 +1,6 @@
 [package]
 name = "libw"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2018"
 authors = ["Richard Anaya"]
 categories = ["wasm", "no-std"]

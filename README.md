@@ -94,6 +94,10 @@ wasmer my_app.wasm --dir=/foo
 * `write_text` - write a text file from a string
 * `read_bytes` - read all bytes from file
 * `write_bytes` - write all bytes to a file
+* `is_readable` - can this file be read from
+* `is_writeable` - can this file be written to
+* `is_directory` - is the file a directory
+* `is_stream` - is this file a stream
 
 ### math
 * `random` - get a random f32

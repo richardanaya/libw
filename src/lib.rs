@@ -315,3 +315,45 @@ pub fn file_size(path: &str) -> Result<u64, String> {
         Err("no access to file".to_string())
     }
 }
+
+pub fn is_readable(path: &str) -> Result<bool, String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let fd = open_file(parent_dir.fd, &rel_path, false).unwrap();
+        let fd_stat = unsafe { wasi::fd_fdstat_get(fd).unwrap() };
+        Ok((fd_stat.fs_rights_base & wasi::RIGHTS_FD_READ) != 0)
+    } else {
+        Err("no access to file".to_string())
+    }
+}
+
+pub fn is_writeable(path: &str) -> Result<bool, String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let fd = open_file(parent_dir.fd, &rel_path, false).unwrap();
+        let fd_stat = unsafe { wasi::fd_fdstat_get(fd).unwrap() };
+        Ok((fd_stat.fs_rights_base & wasi::RIGHTS_FD_WRITE) != 0)
+    } else {
+        Err("no access to file".to_string())
+    }
+}
+
+pub fn is_directory(path: &str) -> Result<bool, String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let file_stat = unsafe { wasi::path_filestat_get(parent_dir.fd, 0, &rel_path).unwrap() };
+        Ok(file_stat.filetype == wasi::FILETYPE_DIRECTORY)
+    } else {
+        Err("no access to file".to_string())
+    }
+}
+
+pub fn is_stream(path: &str) -> Result<bool, String> {
+    if let Some(parent_dir) = get_owning_directory(path) {
+        let rel_path = relative_path(&parent_dir.path, path);
+        let file_stat = unsafe { wasi::path_filestat_get(parent_dir.fd, 0, &rel_path).unwrap() };
+        Ok(file_stat.filetype == wasi::FILETYPE_CHARACTER_DEVICE)
+    } else {
+        Err("no access to file".to_string())
+    }
+}
